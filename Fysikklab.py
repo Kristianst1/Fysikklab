@@ -25,7 +25,7 @@ def iptrack(filename):
 	data=np.loadtxt(filename,skiprows=2)
 	return np.polyfit(data[:,1],data[:,2],15)
 
-p = iptrack('Mass_A.txt')
+p = iptrack('konkav (7).txt')           ##endres ved hver kjøring
 for element in p:
 	print(element)
 
@@ -49,6 +49,8 @@ for element in p:
 # The sign of the radius of the osculating circle is the same as that of
 # the second derivative.
 
+
+
 def trvalues(p,x):
 	y=np.polyval(p,x)
 	dp=np.polyder(p)
@@ -59,20 +61,23 @@ def trvalues(p,x):
 	R=(1.0+dydx**2)**1.5/d2ydx2
 	return [y,dydx,d2ydx2,alpha,R]
 
-xslutt = 0.9
+xslutt = 0.926         ##endres ved hver kjøring/banelengde
 stepsize = 0.001
 n = int(xslutt/stepsize)
 g = 9.81
 v = 0
 x = 0
+t=0
+Imr2=2/3
 dvdt = 0
 print()
 
-for x in range(0, n):
-	[y,dydx,d2ydx2,alpha,R] = trvalues(p,x*stepsize)
-	v = v + stepsize*dvdt
-	x = x + stepsize*v/(math.sqrt(1+(d2ydx2)))
-	[y,dydx,d2ydx2,alpha,R] = trvalues(p,x*stepsize)
-	dvdt = 3/5*g*math.sin(alpha)
-	print(v)
+while xslutt>x:
+    [y, dydx, d2ydx2, alpha, R] = trvalues(p, x)
+    dvdt = g * math.sin(alpha) / (1 + Imr2)
+    v = v + stepsize * dvdt
+    x = x + stepsize * v
+    t += stepsize
+
+print(t)
 
